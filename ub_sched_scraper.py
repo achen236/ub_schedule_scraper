@@ -20,8 +20,8 @@ def getDeptURLs(semester: str, division: str = "UGRD"):
             deptURLs.append(url)
     return deptURLs
 
-# In each department course schedule page extract data into dictionary
-# {"Dept": {"Class Number": {"ClassAttr": Value}}}
+# In each department course schedule page extract data into list of dictionaries
+# {"Dept": [{"ClassAttr": Value}]}
 def getSchedDict(semester: str, division: str = "UGRD"):
     retDict = {}
 
@@ -32,15 +32,15 @@ def getSchedDict(semester: str, division: str = "UGRD"):
         # Add (dept key : {}) to retDict
         dept = url.split("=")[-1].strip()
         print(dept)
-        retDict[dept] = getDeptDict(soup)
+        retDict[dept] = getDeptList(soup)
     
     return retDict
 
 
 
 # Fill deptDict at department schedule url page
-def getDeptDict(soup):
-    deptDict = {}
+def getDeptList(soup):
+    deptList = []
     #print("Getting deptDict\n")
 
     # Get list of labels
@@ -49,21 +49,20 @@ def getDeptDict(soup):
     tableRows = soup.find_all(lambda tag: tag.name=="tr" and tag.has_attr("onmouseover") and tag.has_attr("onmouseout") and tag.has_attr("onclick"))
     # For each course row get class num as key for classDict{labels:text}
     for row in tableRows:  
-        classNumRow = row.find("td")
-        classNum = stringNormalize(classNumRow.string)
-        deptDict[classNum] = getClassDict(classNumRow, labels)
+        classNumRows = row.find_all("td")
+        deptList.append(getClassDict(classNumRows, labels))
 
-    return deptDict
+    return deptList
 
 
 # Get classDict
-def getClassDict(classNumRow, labels):
+def getClassDict(classNumRows, labels):
     classDict = {}
     #print("Getting classDict\n")
 
     # Fill dictionary with label:text
-    i = 1
-    for col in classNumRow.next_siblings:
+    i = 0
+    for col in classNumRows:
         text = stringNormalize(col.string)
         if text:
             classDict[labels[i]] = text
