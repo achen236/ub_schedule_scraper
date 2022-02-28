@@ -1,9 +1,7 @@
-import re
 import unicodedata
 import requests
-from os.path import exists
 from bs4 import BeautifulSoup
-import pandas as pd
+
 
 # Request website and download HTML
 def getDeptURLs(semester: str, division: str = "UGRD"):
@@ -24,7 +22,7 @@ def getDeptURLs(semester: str, division: str = "UGRD"):
 
 # In each department course schedule page extract data into dictionary
 # {"Dept": {"Class Number": {"ClassAttr": Value}}}
-def getCourseDict(semester: str, division: str = "UGRD"):
+def getSchedDict(semester: str, division: str = "UGRD"):
     retDict = {}
 
     deptURLs = getDeptURLs("spring")
@@ -33,6 +31,7 @@ def getCourseDict(semester: str, division: str = "UGRD"):
         # Get dept abbreviation from url
         # Add (dept key : {}) to retDict
         dept = url.split("=")[-1].strip()
+        print(dept)
         retDict[dept] = getDeptDict(soup)
     
     return retDict
@@ -42,7 +41,7 @@ def getCourseDict(semester: str, division: str = "UGRD"):
 # Fill deptDict at department schedule url page
 def getDeptDict(soup):
     deptDict = {}
-    print("Getting deptDict\n")
+    #print("Getting deptDict\n")
 
     # Get list of labels
     labels = getLabels(soup)
@@ -50,10 +49,9 @@ def getDeptDict(soup):
     tableRows = soup.find_all(lambda tag: tag.name=="tr" and tag.has_attr("onmouseover") and tag.has_attr("onmouseout") and tag.has_attr("onclick"))
     # For each course row get class num as key for classDict{labels:text}
     for row in tableRows:  
-        deptDict
         classNumRow = row.find("td")
-        classNum = classNumRow.string
-        deptDict[classNum] = getClassDict(soup, labels)
+        classNum = stringNormalize(classNumRow.string)
+        deptDict[classNum] = getClassDict(classNumRow, labels)
 
     return deptDict
 
@@ -61,13 +59,13 @@ def getDeptDict(soup):
 # Get classDict
 def getClassDict(classNumRow, labels):
     classDict = {}
-    print("Getting classDict\n")
+    #print("Getting classDict\n")
 
     # Fill dictionary with label:text
     i = 1
     for col in classNumRow.next_siblings:
         text = stringNormalize(col.string)
-        if not re.search("^" + stringNormalize(col.string), "\n"):
+        if text:
             classDict[labels[i]] = text
             i += 1
 
@@ -95,13 +93,9 @@ def getLabels(soup):
         text = stringNormalize(label.string)
         retList.append(text)
     return retList
-    
-
-
-
 
 def main():
-    print(getCourseDict("spring"))
+    print(getSchedDict("spring"))
     #soup = getSoup("https://www.buffalo.edu/class-schedule?switch=showcourses&semester=spring&division=UGRD&dept=AAS")
     #getDeptDict(soup)
     
