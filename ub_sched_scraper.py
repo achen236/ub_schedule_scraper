@@ -64,7 +64,14 @@ def getClassDict(classNumRows, labels):
     i = 0
     for col in classNumRows:
         text = stringNormalize(col.string)
-        if text:
+        # Get course name from hyperlink
+        course = col.find("a")
+        if course != None:
+            classDict[labels[i]] = stringNormalize(course.string)
+            i += 1
+        elif text:
+            if labels[i] == "Time":
+                text = "".join(text.split())
             classDict[labels[i]] = text
             i += 1
 
