@@ -5,9 +5,7 @@ from os.path import exists
 
 def showDeptSchedule(schedDict, dept):
     # Create dataframe
-    print(schedDict)
     df = pd.DataFrame.from_records(schedDict[dept])
-    print(df)
 
     if not exists("/csv/" + dept + ".csv"):
         df.to_csv("/csv/" + dept + ".csv")
@@ -18,8 +16,7 @@ def showSchoolSched():
     schedDict = ub_sched_scraper.getSchedDict("spring")
 
     for dept, courseDict in schedDict.items():
-        print(dept)
-        showDeptSchedule(dept, schedDict)
+        showDeptSchedule(schedDict, dept)
 
 
 def main():
