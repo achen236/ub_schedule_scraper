@@ -7,8 +7,8 @@ def showDeptSchedule(schedDict, dept):
     # Create dataframe
     df = pd.DataFrame.from_records(schedDict[dept])
 
-    if not exists("/csv/" + dept + ".csv"):
-        df.to_csv("/csv/" + dept + ".csv")
+    if not exists("./csv/" + dept + ".csv"):
+        df.to_csv("./csv/" + dept + ".csv", index = False)
 
 def showSchoolSched():
     # Scrape and collect data
