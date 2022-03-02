@@ -50,14 +50,14 @@ def getDeptList(soup):
     # For each course row get class num as key for classDict{labels:text}
     for row in tableRows:  
         classNumRows = row.find_all("td")
-        deptList.append(getClassDict(classNumRows, labels))
+        deptList.append(getCourseDict(classNumRows, labels))
 
     return deptList
 
 
 # Get classDict
-def getClassDict(classNumRows, labels):
-    classDict = {}
+def getCourseDict(classNumRows, labels):
+    courseDict = {}
     #print("Getting classDict\n")
 
     # Fill dictionary with label:text
@@ -67,15 +67,15 @@ def getClassDict(classNumRows, labels):
         # Get course name from hyperlink
         course = col.find("a")
         if course != None:
-            classDict[labels[i]] = stringNormalize(course.string)
+            courseDict[labels[i]] = stringNormalize(course.string)
             i += 1
         elif text:
             if labels[i] == "Time":
                 text = "".join(text.split())
-            classDict[labels[i]] = text
+            courseDict[labels[i]] = text
             i += 1
 
-    return classDict
+    return courseDict
 
 # Get soup
 def getSoup(url):
