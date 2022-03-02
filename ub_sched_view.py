@@ -1,26 +1,30 @@
+import sched
 import pandas as pd
 import ub_sched_scraper
 from os.path import exists
 
-def showDeptSchedule(dept):
-    soup = ub_sched_scraper.getSoup("https://www.buffalo.edu/class-schedule?switch=showcourses&semester=spring&division=UGRD&dept=AAS")
-    labels = ub_sched_scraper.getLabels(soup)
+def showDeptSchedule(schedDict, dept):
+    # Create dataframe
+    print(schedDict)
+    df = pd.DataFrame.from_records(schedDict[dept])
+    print(df)
 
+    if not exists("/csv/" + dept + ".csv"):
+        df.to_csv("/csv/" + dept + ".csv")
+
+def showSchoolSched():
     # Scrape and collect data
     # {"Dept": [{"ClassAttr": Value}]}
     schedDict = ub_sched_scraper.getSchedDict("spring")
 
-    # Create dataframe
-    df = pd.DataFrame.from_records(schedDict[dept])
-    print(df)
-    
-    if not exists(dept + ".csv"):
-        df.to_csv(dept + ".csv")
+    for dept, courseDict in schedDict.items():
+        print(dept)
+        showDeptSchedule(dept, schedDict)
 
-    
 
 def main():
-    showDeptSchedule("CSE")
+    #showDeptSchedule("CSE")
+    showSchoolSched()
     
 if __name__ == "__main__":
     main()
