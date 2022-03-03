@@ -4,8 +4,9 @@
 # Ignore node_modules folder
 node_modules
 
-# Ignore all text files
+# Ignore all text files except requirements
 *.txt
+!requirements.txt
 
 # Ignore all csv files
 *.csv
