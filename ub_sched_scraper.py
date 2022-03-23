@@ -72,7 +72,7 @@ def getCourseDict(classNumRows, labels):
             i += 1
         elif text:
             if labels[i] == "Time":
-                text = "".join(text.split())
+                text = removeAllWhiteSpace(text)
             courseDict[labels[i]] = text
             i += 1
 
@@ -100,6 +100,9 @@ def getLabels(soup):
         text = stringNormalize(label.string)
         retList.append(text)
     return retList
+
+def removeAllWhiteSpace(string: String):
+    return "".join(string.split())
 
 def main():
     print(getSchedDict("spring"))
