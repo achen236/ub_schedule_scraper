@@ -21,7 +21,7 @@ def getDeptURLs(semester: str, division: str = "UGRD"):
     return deptURLs
 
 # In each department course schedule page extract data into list of dictionaries
-# {"Dept": [{"ClassAttr": Value}]}
+# {"Dept": [Course1 = {"CourseAttr": Value}, Course2 = {"CourseAttr": Value}, . . .]}
 def getSchedDict(semester: str, division: str = "UGRD"):
     retDict = {}
 
@@ -39,6 +39,7 @@ def getSchedDict(semester: str, division: str = "UGRD"):
 
 
 # Fill deptDict at department schedule url page
+# Returns list of Department's courses
 def getDeptList(soup):
     deptList = []
     #print("Getting deptDict\n")
@@ -90,7 +91,7 @@ def stringNormalize(navigableString):
     normalString = unicodedata.normalize("NFKD", string)
     return normalString.strip()
 
-# Get list of labels
+# Get list of column labels
 def getLabels(soup):
     retList = []
     labels = soup.find_all("td", class_ = "gridlabel", limit = 11)

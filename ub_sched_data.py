@@ -6,17 +6,18 @@ import ub_sched_scraper
 
 
 # Get department schedule to csv
-def showDeptSchedule(schedDict, dept):
+def getCSVDeptSched(schedDict, dept, overwrite = False):
     # Create dataframe
     df = pd.DataFrame.from_records(schedDict[dept])
-
     if not exists("./csv/" + dept + ".csv"):
+        df.to_csv("./csv/" + dept + ".csv", index = False)
+    elif overwrite:
         df.to_csv("./csv/" + dept + ".csv", index = False)
 
 # Get all department schedules to csv
-def showSchoolSched(schedDict):
-    for dept, courseDict in schedDict.items():
-        showDeptSchedule(schedDict, dept)
+def getCSVAllDeptSched(schedDict, overwrite = False):
+    for dept in schedDict.keys():
+        getCSVDeptSched(schedDict, dept, overwrite)
 
 # Save schedDict to pickle
 def saveSchedDict():
@@ -29,14 +30,15 @@ def saveSchedDict():
 
 # Load schedDict from pickle
 def loadSchedDict():
+    if not exists("./schedDict.pkl"):
+        saveSchedDict
     with open("schedDict.pkl", "rb") as tf:
         schedDict = pickle.load(tf)
     return schedDict
 
 def main():
-    #showDeptSchedule("CSE")
-    #showSchoolSched()
-    #saveSchedDict()
+    getCSVAllDeptSched(ub_sched_scraper.getSchedDict("spring"), True )
+    saveSchedDict()
     print(loadSchedDict())
     
 if __name__ == "__main__":
