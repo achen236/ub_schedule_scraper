@@ -52,6 +52,12 @@ Pipenv is used to handle dependencies and virtual environments.
 * **ub_sched_scraper.py** gets the data from the website
 * **ub_sched_data.py** saves the data in CSV, JSON, or Pickle
 * **ub_sched_plot.py** plots data
+* **Example:**
+Scrape website with 4 processorsand save data in JSON file
+`saveSchedDictJSON(semester="spring", processors=4)` 
+Plot the number of courses with time interval of 10 minutes
+`plotSched(countPeople=False, timeInterval=10)
+`
 
 
 ## Room for Improvement
