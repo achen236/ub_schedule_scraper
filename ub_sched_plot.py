@@ -10,7 +10,7 @@ def schedCoursesMatrix(timeInterval: int, dayRange:int, countPeople: bool = True
     # initialize matrix of zeros
     timeRange = getTimeRange(timeInterval)
     matrix = initializeSchedMatrix(timeRange, dayRange)
-    schedDict = ub_sched_data.loadSchedDict()
+    schedDict = ub_sched_data.loadSchedDictJSON()
     print("Forming Data")
     for courses in schedDict.values():
         for course in courses:
@@ -46,7 +46,8 @@ def schedCoursesMatrix(timeInterval: int, dayRange:int, countPeople: bool = True
                         j += 1
     return matrix
 
-#  countName if true counts enrolled
+# countName if true counts enrolled
+# 60 % timeInterval must equal 0
 def plotSched(countPeople = True, timeInterval = 30, dayRange = 5, location: string = "North Campus"):
     data = schedCoursesMatrix(timeInterval, dayRange, True)
     countName: string
@@ -173,9 +174,8 @@ def listOfZeros(n: int):
     return [0] * n
 
 def main():
-    print("Getting Data")
     #ub_sched_data.saveSchedDict()
-    plotSched('Courses', 60)
+    plotSched(False, 10)
 
 if __name__ == "__main__":
     main()

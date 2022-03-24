@@ -2,6 +2,7 @@ import string
 import pandas as pd
 import pickle
 from os.path import exists
+import json
 
 import ub_sched_scraper
 
@@ -25,7 +26,7 @@ def getCSVAllDeptSched(schedDict, overwrite = False):
 
 # Save schedDict to pickle
 # Multiprocessing if processors > 1
-def saveSchedDict(semester: string, processors: int = 1):
+def saveSchedDictPkl(semester: string, processors: int = 1):
     # Scrape and collect data
     # {"Dept": [{"ClassAttr": Value}]}
     schedDict = ub_sched_scraper.getSchedDict(semester, processors)
@@ -35,16 +36,36 @@ def saveSchedDict(semester: string, processors: int = 1):
     print("Saved schedDict to schedDict.pkl")
 
 # Load schedDict from pickle
-def loadSchedDict():
+def loadSchedDictPkl():
     if not exists("./schedDict.pkl"):
-        saveSchedDict
+        print("./schedDict.pkl does not exist")
     with open("schedDict.pkl", "rb") as tf:
         schedDict = pickle.load(tf)
     return schedDict
 
+# Save schedDict to JSON
+def saveSchedDictJSON(semester: string, processors: int = 1):
+    # Scrape and collect data
+    # {"Dept": [{"ClassAttr": Value}]}
+    schedDict = ub_sched_scraper.getSchedDict(semester, processors)
+
+    with open("schedDict.json", "w") as tf:
+        json.dump(schedDict, tf, indent=6)
+    print("Saved schedDict to schedDict.json")
+
+# Load schedDict from JSON
+def loadSchedDictJSON():
+    if not exists("./schedDict.json"):
+        print("./schedDict.json does not exist")
+    with open("schedDict.json", "r") as tf:
+        schedDict = json.load(tf)
+    return schedDict
+
+
 def main():
-    saveSchedDict("spring", 4)
-    getCSVAllDeptSched(loadSchedDict(), True)
+    #saveSchedDictPkl("spring", 1)
+    saveSchedDictJSON("spring", 4)
+    #getCSVAllDeptSched(loadSchedDict(), True)
     
 if __name__ == "__main__":
     main()

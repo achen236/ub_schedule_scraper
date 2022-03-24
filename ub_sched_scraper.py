@@ -29,6 +29,7 @@ def getDeptURLs(semester: str, division: str = "UGRD"):
 
 # In each department course schedule page extract data into list of dictionaries
 # {"Dept": [Course1 = {"CourseAttr": Value}, Course2 = {"CourseAttr": Value}, . . .]}
+# Using more processors than 4 gets blocked by UB
 def getSchedDict(semester:string = "spring", processors: int = 1, division: str = "UGRD"):
     retDict = {}
     # timer
@@ -44,14 +45,14 @@ def getSchedDict(semester:string = "spring", processors: int = 1, division: str 
             dept = url.split("=")[-1].strip()
             print(dept)
             retDict[dept] = getDeptList(soup)
-            print("Multiprocessing Scraping Time Taken: ",str(time.time()-start))
-            return retDict
+            print("UniProcessing Scraping Time Taken: ",str(time.time()-start))
+        return retDict
     # Multiprocessing
     else:
         pool = Pool(min(processors, cpu_count()))  # Creates a Pool with number of processors (max processors = cpu_count)
         results = pool.map(partial(getSchedDictProcessorHelper, semester=semester, division=division ),deptURLs)
 
-        print("Multiprocessing " + str(processors) + " Scraping Time Taken: ",str(time.time()-start))
+        print("Multiprocessing (" + str(processors) + ") Scraping Time Taken: ",str(time.time()-start))
         for result in results:
             retDict[result[0]] = result[1]
         return retDict
