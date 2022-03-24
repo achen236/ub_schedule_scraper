@@ -41,10 +41,11 @@ def schedCoursesMatrix(timeInterval: int, dayRange:int, countPeople: bool = Fals
                         j += 1
     return matrix
 
-def plotSched(colorName, timeInterval = 30, dayRange = 6, ):
+def plotSched(colorName, timeInterval = 30, dayRange = 6, location: string = "North Campus"):
     data = schedCoursesMatrix(timeInterval, dayRange)
     print("Plotting")
     fig = px.imshow(data,
+                    title=location,
                     labels=dict(x="Day of Week", y="Time of Day", color=colorName),
                     x= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
                     y= getListofTimeIntervals(timeInterval),
