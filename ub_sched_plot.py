@@ -6,7 +6,7 @@ import numpy
 
 # return matrix with values of number of course at an interval of hour of a day in week
 # counts Courses by default, if countPeople is True, count people enrolled in class
-def schedCoursesMatrix(timeInterval: int, dayRange:int, countPeople: bool = False):
+def schedCoursesMatrix(timeInterval: int, dayRange:int, countPeople: bool = False, loc: string = "North Campus"):
     # initialize matrix of zeros
     timeRange = getTimeRange(timeInterval)
     matrix = initializeSchedMatrix(timeRange, dayRange)
@@ -14,6 +14,9 @@ def schedCoursesMatrix(timeInterval: int, dayRange:int, countPeople: bool = Fals
     print("Forming Data")
     for courses in schedDict.values():
         for course in courses:
+            location = course["Location"]
+            if location != loc:
+                continue
             days = course["Days"]
             time = course["Time"]
             # get binary list of class days
@@ -29,14 +32,10 @@ def schedCoursesMatrix(timeInterval: int, dayRange:int, countPeople: bool = Fals
             # for each day add 1 to time interval matrix cell when class in session
             for i in range(dayRange):
                 if binDays[i] == 1:
-                    print("Next day")
                     startIndex = getIndexOfTime(startEndMilTime[0], timeInterval)
                     endIndex = getIndexOfTime(startEndMilTime[1], timeInterval)
-                    print(startIndex)
-                    print(endIndex)
                     j = startIndex
                     while j <= endIndex:
-                        print("Next time")
                         # add course to total courses in that time interval
                         matrix[j][i] += 1
                         j += 1
@@ -64,7 +63,7 @@ def getIndexOfTime(time: int, timeInterval: int):
 # timeInterval input 0-60 minutes
 def getListofTimeIntervals(timeInterval):
     retList = []
-    time = 0000
+    time = 0
     minutes = 0
     while time < 2400:
         retList.append(timeIntToString(time))
