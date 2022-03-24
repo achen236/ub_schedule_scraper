@@ -4,6 +4,10 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import html5lib
+from multiprocessing import Pool
+from multiprocessing import cpu_count
+from functools import partial
+import time
 
 
 # Request website and download HTML
@@ -25,19 +29,45 @@ def getDeptURLs(semester: str, division: str = "UGRD"):
 
 # In each department course schedule page extract data into list of dictionaries
 # {"Dept": [Course1 = {"CourseAttr": Value}, Course2 = {"CourseAttr": Value}, . . .]}
-def getSchedDict(semester: str, division: str = "UGRD"):
+def getSchedDict(semester:string = "spring", processors: int = 1, division: str = "UGRD"):
     retDict = {}
+    # timer
+    start=time.time()
+    # get list of Dept URLS
+    deptURLs = getDeptURLs(semester, division)
+    # Uniprocessing
+    if processors < 2:
+        for url in deptURLs:
+            soup = getSoup(url)
+            # Get dept abbreviation from url
+            # Add (dept key : {}) to retDict
+            dept = url.split("=")[-1].strip()
+            print(dept)
+            retDict[dept] = getDeptList(soup)
+            print("Multiprocessing Scraping Time Taken: ",str(time.time()-start))
+            return retDict
+    # Multiprocessing
+    else:
+        pool = Pool(min(processors, cpu_count()))  # Creates a Pool with number of processors (max processors = cpu_count)
+        results = pool.map(partial(getSchedDictProcessorHelper, semester=semester, division=division ),deptURLs)
 
-    deptURLs = getDeptURLs("spring")
-    for url in deptURLs:
-        soup = getSoup(url)
-        # Get dept abbreviation from url
-        # Add (dept key : {}) to retDict
-        dept = url.split("=")[-1].strip()
-        print(dept)
-        retDict[dept] = getDeptList(soup)
-    
-    return retDict
+        print("Multiprocessing " + str(processors) + " Scraping Time Taken: ",str(time.time()-start))
+        for result in results:
+            retDict[result[0]] = result[1]
+        return retDict
+
+
+#return tuple (dept name, list of courseDicts in dept)
+def getSchedDictProcessorHelper(url, semester: str, division: str = "UGRD"):
+    # wait 5-10 seconds so we dont get blocked
+    # time.sleep(random.randint(5, 10))
+    soup = getSoup(url)
+    # Get dept abbreviation from url
+    # Add (dept key : {}) to retDict
+    dept = url.split("=")[-1].strip()
+    print(dept)
+    return (dept, getDeptList(soup))
+
 
 
 
@@ -118,9 +148,10 @@ def removeAllWhiteSpace(string: string):
     return "".join(string.split())
 
 def main():
-    print(getSchedDict("spring"))
+    #print(getSchedDict("spring"))
     #soup = getSoup("https://www.buffalo.edu/class-schedule?switch=showcourses&semester=spring&division=UGRD&dept=AAS")
     #getDeptDict(soup)
+    return
     
 if __name__ == "__main__":
     main()

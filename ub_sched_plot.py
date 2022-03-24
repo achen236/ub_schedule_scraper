@@ -3,7 +3,6 @@ import string
 import ub_sched_data, ub_sched_scraper
 import plotly.express as px
 import math
-import numpy
 
 # return matrix with values of number of course at an interval of hour of a day in week
 # counts Courses by default, if countPeople is True, count people enrolled in class
