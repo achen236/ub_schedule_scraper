@@ -2,6 +2,8 @@ import string
 import unicodedata
 import requests
 from bs4 import BeautifulSoup
+import re
+import html5lib
 
 
 # Request website and download HTML
@@ -70,6 +72,10 @@ def getCourseDict(classNumRows, labels):
         course = col.find("a")
         if course != None:
             courseDict[labels[i]] = stringNormalize(course.string)
+            detailsURL = course["href"]
+            # returns int of enrolled students in class
+            enrolled = getEnrolled(detailsURL)
+            courseDict["Enrolled"] = enrolled
             i += 1
         elif text:
             if labels[i] == "Time":
@@ -79,11 +85,17 @@ def getCourseDict(classNumRows, labels):
 
     return courseDict
 
+def getEnrolled(url):
+    soup = getSoup(url)
+    td = soup.find("td", text = re.compile("Enrollment Total"))
+    enrolled = td.find_next_sibling("td").text
+    return int(enrolled)
+
 # Get soup
 def getSoup(url):
     request = requests.get(url)
     content = request.text
-    soup = BeautifulSoup(content, "html.parser")
+    soup = BeautifulSoup(content, "html5lib")
     return soup
 
 # Turn soup's NavigableString into str and unicode normalize it

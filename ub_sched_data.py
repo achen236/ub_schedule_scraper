@@ -1,3 +1,4 @@
+import string
 import pandas as pd
 import pickle
 from os.path import exists
@@ -20,10 +21,10 @@ def getCSVAllDeptSched(schedDict, overwrite = False):
         getCSVDeptSched(schedDict, dept, overwrite)
 
 # Save schedDict to pickle
-def saveSchedDict():
+def saveSchedDict(semester: string):
     # Scrape and collect data
     # {"Dept": [{"ClassAttr": Value}]}
-    schedDict = ub_sched_scraper.getSchedDict("spring")
+    schedDict = ub_sched_scraper.getSchedDict(semester)
 
     with open("schedDict.pkl", "wb") as tf:
         pickle.dump(schedDict, tf)
@@ -37,8 +38,8 @@ def loadSchedDict():
     return schedDict
 
 def main():
-    getCSVAllDeptSched(ub_sched_scraper.getSchedDict("spring"), True )
-    saveSchedDict()
+    saveSchedDict("spring")
+    getCSVAllDeptSched(loadSchedDict(), True )
     print(loadSchedDict())
     
 if __name__ == "__main__":

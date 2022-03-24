@@ -1,3 +1,4 @@
+from itertools import count
 import string
 import ub_sched_data, ub_sched_scraper
 import plotly.express as px
@@ -6,7 +7,7 @@ import numpy
 
 # return matrix with values of number of course at an interval of hour of a day in week
 # counts Courses by default, if countPeople is True, count people enrolled in class
-def schedCoursesMatrix(timeInterval: int, dayRange:int, countPeople: bool = False, loc: string = "North Campus"):
+def schedCoursesMatrix(timeInterval: int, dayRange:int, countPeople: bool = True, loc: string = "North Campus"):
     # initialize matrix of zeros
     timeRange = getTimeRange(timeInterval)
     matrix = initializeSchedMatrix(timeRange, dayRange)
@@ -37,16 +38,27 @@ def schedCoursesMatrix(timeInterval: int, dayRange:int, countPeople: bool = Fals
                     j = startIndex
                     while j <= endIndex:
                         # add course to total courses in that time interval
-                        matrix[j][i] += 1
+                        add = 0
+                        if countPeople:
+                            add = course["Enrolled"]
+                        else:
+                            add = 1
+                        matrix[j][i] += add
                         j += 1
     return matrix
 
-def plotSched(colorName, timeInterval = 30, dayRange = 6, location: string = "North Campus"):
-    data = schedCoursesMatrix(timeInterval, dayRange)
+#  countName if true counts enrolled
+def plotSched(countPeople = True, timeInterval = 30, dayRange = 6, location: string = "North Campus"):
+    data = schedCoursesMatrix(timeInterval, dayRange, True)
+    countName: string
+    if countPeople:
+        countName = "People"
+    else:
+        countName = "Courses"
     print("Plotting")
     fig = px.imshow(data,
                     title=location,
-                    labels=dict(x="Day of Week", y="Time of Day", color=colorName),
+                    labels=dict(x="Day of Week", y="Time of Day", color=countName),
                     x= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
                     y= getListofTimeIntervals(timeInterval),
                     aspect="auto"
