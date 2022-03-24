@@ -48,7 +48,7 @@ def schedCoursesMatrix(timeInterval: int, dayRange:int, countPeople: bool = True
     return matrix
 
 #  countName if true counts enrolled
-def plotSched(countPeople = True, timeInterval = 30, dayRange = 6, location: string = "North Campus"):
+def plotSched(countPeople = True, timeInterval = 30, dayRange = 5, location: string = "North Campus"):
     data = schedCoursesMatrix(timeInterval, dayRange, True)
     countName: string
     if countPeople:
@@ -59,11 +59,11 @@ def plotSched(countPeople = True, timeInterval = 30, dayRange = 6, location: str
     fig = px.imshow(data,
                     title=location,
                     labels=dict(x="Day of Week", y="Time of Day", color=countName),
-                    x= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                    x= ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
                     y= getListofTimeIntervals(timeInterval),
                     aspect="auto"
                 )
-    fig.layout.height = 750
+    fig.layout.height = 1000
     fig.layout.width = 750
     fig.update_xaxes(side="top")
     fig.show()            
@@ -176,7 +176,7 @@ def listOfZeros(n: int):
 def main():
     print("Getting Data")
     #ub_sched_data.saveSchedDict()
-    plotSched('Courses', 10)
+    plotSched('Courses', 60)
 
 if __name__ == "__main__":
     main()
