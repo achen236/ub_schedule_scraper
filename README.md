@@ -34,10 +34,11 @@
 ## Screenshots
 Undergraduate courses in session on North Campus during a week (Spring 2022)
 
-
+![courses1-png](./plots/courses1.png)
 
 People enrolled in undergraduate courses in session on North Campus during a week (Spring 2022)
 
+![enrolled1-png](./plots/enrolled1.png)
 
 ## Setup
 Pipenv is used to handle dependencies and virtual environments.
