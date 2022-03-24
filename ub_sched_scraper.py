@@ -1,3 +1,4 @@
+import string
 import unicodedata
 import requests
 from bs4 import BeautifulSoup
@@ -101,7 +102,7 @@ def getLabels(soup):
         retList.append(text)
     return retList
 
-def removeAllWhiteSpace(string: String):
+def removeAllWhiteSpace(string: string):
     return "".join(string.split())
 
 def main():
